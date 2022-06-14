@@ -27,7 +27,7 @@ class utf8 {
 
 		//setFontSet(
 
-		print_utf8(char *s); //print utf8 string on display
+		void print_utf8(char *s); //print utf8 string on display
 		//getTextBounds_utf8(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
 };
 
