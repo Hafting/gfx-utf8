@@ -2,12 +2,13 @@
 #define GFXUTF8
 
 #include <Adafruit_GFX.h>
-#include <array.h>
 
 /*
 	A fontset is one or several regular fonts with non-overlapping glyph ranges, used for utf8 printing. This saves memory by not storing unused glyph ranges. 
 
 	Also, print_utf8() uses print(), so a single font cannot have more than 256 glyphs anyway. More glyphs are supported by using a fontset with multiple fonts.
+
+	size must match the number of fonts in the array.
 	 */
 struct fontset {
 	GFX_font font[];
