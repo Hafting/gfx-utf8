@@ -11,7 +11,7 @@
 	size must match the number of fonts in the array.
 	 */
 struct fontset {
-	GFX_font font[];
+	GFXfont font[];
 	int size;
 };
 
@@ -25,7 +25,7 @@ class utf8 {
 	public:
 		utf8(Adafruit_GFX *displ);
 
-		setFontSet(
+		//setFontSet(
 
 		print_utf8(char *s); //print utf8 string on display
 		//getTextBounds_utf8(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
