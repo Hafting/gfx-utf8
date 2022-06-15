@@ -1,0 +1,16 @@
+(You need a good unicode font to read this file.)
+Some unicode ranges
+  32 -  126 Ascii: abcdefghijklmnopqrstuvwxyz and more
+ 160 -  255 Latin1 supplement: æåðß øôòóöõ ×÷ 
+ 256 -  383 Latin extended A: ōŏő šůŋ  
+ 384 -  591 Latin extended B: ơƣǒǫǭȍȏȫȭȯȱ 
+
+ 880 - 1023 Greek and Coptic: αβπΔΩΣ
+1024 - 1279 Cyrillic: БГЖ
+1280 - 1327 Cyrillic supplement: Ԫ
+5792 - 5880 Runic: ᚠ ᚩ ᚸ
+8448 - 8527 Letterlike symbols: ℃ ℉ ℏ № ℝ ℞ ™
+8528 - 8591 Number forms: ¼ ⅐ ⅗ Ⅰ Ⅱ Ⅲ Ⅳ Ⅻ
+8592 - 8703 Arrows: → ↕ ↘ ↝ ↧ ↺ ⇒ ⇩
+9984 -10175 Dingbats: ➑ ✀ ✆ ✎ ❆
+
