@@ -28,8 +28,8 @@ class utf8 {
 	public:
 		utf8(Adafruit_GFX *displ);
 		void setFontSet(fontset *fset);
-		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint16_t bg, uint8_t size);
-		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint16_t bg, uint8_t size_x, uint8_t size_y);
+		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
+		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
 
 		void print_utf8(char *s); //print utf8 string on display
 		//getTextBounds_utf8(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future

@@ -15,7 +15,7 @@ void utf8::setFontSet(fontset *fset) {
 	 */
 GFXfont *utf8::font_lookup(uint16_t c) {
 	if (cur_fonts) 	for (int i = 0; i < cur_fonts->size; ++i) {
-		GFXfont *font = cur_font->font + i;
+		GFXfont *font = cur_fonts->font + i;
 		if (font->first <= c && font->last >= c) return font;
 	}
  return (GFXfont *) 0;
