@@ -15,9 +15,9 @@ drawChar(), print() and println() work with 8-bit bytes only. So there is room f
 The fontconvert utility uses 16-bit internally, and can therefore convert fonts with lots of interesting glyphs. But it will only do continous series of glyphs. So if you need ascii + character number 7000, you get a font with 7000 glyphs wasting precious memory.
 
 Solutions:
-The fontconvert problem is handled by making separate fonts for each range of glyphs needed. This avoids wasting space for unused glyphs. print_utf8() handle switching between sub-fonts internally.
+The fontconvert problem is handled by making separate fonts for each range of glyphs needed. This avoids wasting space for unused glyphs. print_utf8() handles switching between sub-fonts in a font set internally.
 
-print_utf8() decodes utf8 sequences to find the glyph number. Then, the correct sub-font is selected and the glyph is printed using the original print()
+print_utf8() decodes utf8 sequences to find the glyph number. Then, the correct sub-font is selected and the glyph is printed.
 
 Non-solution:
 extending print() to handle utf8 directly is possible, and backward compatible with ascii printing. It is not backwards compatible with existing 8-bit printing using iso8859 though.
