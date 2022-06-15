@@ -25,7 +25,7 @@ GFXfont *utf8::font_lookup(uint16_t c) {
 	Similar to Adafruit GFX library drawChar, but no 'classic font' and therefore no background color.
 	 */
 void utf8::drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size) {
-	drawChar(x, y, c, color, size, size);
+	drawChar_utf8(x, y, c, color, size, size);
 }
 
 void utf8::drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y) {
