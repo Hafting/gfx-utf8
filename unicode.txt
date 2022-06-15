@@ -12,5 +12,19 @@ Some unicode ranges
 8448 - 8527 Letterlike symbols: ℃ ℉ ℏ № ℝ ℞ ™
 8528 - 8591 Number forms: ¼ ⅐ ⅗ Ⅰ Ⅱ Ⅲ Ⅳ Ⅻ
 8592 - 8703 Arrows: → ↕ ↘ ↝ ↧ ↺ ⇒ ⇩
-9984 -10175 Dingbats: ➑ ✀ ✆ ✎ ❆
+9984 -10175 Dingbats: ✀ ➑ ✆ ✎ ❆
+
+To make a 8pt fontset with ascii, Latin1+LatinA, the arrows and the scissor dingbat:
+fontconvert FreeSans.ttf 8 32 126 > Freesans8pt32-126.h
+fontconvert FreeSans.ttf 8 160 383 > Freesans8pt160-383.h
+fontconvert FreeSans.ttf 8 8592 8703 > Freesans8pt8592-8703.h
+fontconvert FreeSans.ttf 8 9984 9984 > Freesans8pt9984.h
+Total approx. 8815 byte
+
+Note that fontconvert will reuse names like 
+FreeSans8pt8bBitmaps, FreeSans8pt8bGlyphs, and FreeSans8pt8b
+in all those non-ascii files. So in this case, the file must be edited to
+resolve duplicate nidentifiers. For example, FreeSansA8pt, FreeSansB8pt, FreesansC8pt
+Or something more descriptive, like FreeSans8pt16b32_126, FreeSans8pt16b160_383,...
+
 

@@ -11,8 +11,8 @@
 	For sane linefeeds, all fonts in a set should have the same height.
 	 */
 struct fontset {
-	GFXfont font[];
 	int size;
+	GFXfont font[];
 };
 
 /*
