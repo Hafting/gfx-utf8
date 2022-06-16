@@ -23,8 +23,16 @@ Total approx. 8815 byte
 
 Note that fontconvert will reuse names like 
 FreeSans8pt8bBitmaps, FreeSans8pt8bGlyphs, and FreeSans8pt8b
-in all those non-ascii files. So in this case, the file must be edited to
-resolve duplicate nidentifiers. For example, FreeSansA8pt, FreeSansB8pt, FreesansC8pt
+in all those non-ascii font files. So in this case, the file must be edited to
+resolve duplicate identifiers. For example, FreeSansA8pt, FreeSansB8pt, FreesansC8pt
 Or something more descriptive, like FreeSans8pt16b32_126, FreeSans8pt16b160_383,...
 
+Alternatively, rename the ttf file between each fontconvert run, as fontconvert uses the filename to make its identifier names.
 
+fontconvert is a 16-bit utility, so you can't extract glyphs beyond 65535. But the basic multilingual plane covers a lot.
+
+Unicode character numbers and ranges can be found at https://en.wikipedia.org/wiki/Plane_(Unicode)#Basic_Multilingual_Plane or any unicode reference.
+
+Note that most fonts don't implement all of unicode. If the font don't have the glyph you want, fontconvert will put a framed question mark in its place. For example, FreeSans only have one of the dingbats. All others become error characters.
+
+Trying to print glyphs you haven't extracted, will print nothing at all.

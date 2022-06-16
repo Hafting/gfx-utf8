@@ -211,4 +211,7 @@ void utf8_GFX::print(unsigned char const *s) {
 	}
 }
 
+void utf8_GFX::print(char const *s) {
+	print((unsigned char const *)s); //Apparently, c++ is that stupid.
+}
 

@@ -35,6 +35,7 @@ class utf8_GFX {
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
 		size_t write(uint16_t c); //print utf8 character, handling \n
 		void print(unsigned char const *s); //print utf8 string on display
+		void print(char const *s); 
 		//getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
 
 		void setTextColor(uint16_t c) { textcolor = c; }
