@@ -13,7 +13,7 @@
 	 The class that prints utf8 strings,
 	 will eventually also measure them.
 	 */
-class utf8 {
+class utf8_GFX {
 	private:
 		Adafruit_GFX *display;
 		const GFXfont **cur_font; //Array of fonts for utf8 printing
@@ -21,13 +21,13 @@ class utf8 {
 
 		GFXfont const *font_lookup(uint16_t c);
 	public:
-		utf8(Adafruit_GFX *displ);
+		utf8_GFX(Adafruit_GFX *displ);
 		void setFontSet(const GFXfont **fset, int n);
-		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
-		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
-
-		void print_utf8(char *s); //print utf8 string on display
-		//getTextBounds_utf8(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
+		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
+		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
+		size_t write(uint16_t c); //print utf8 character, handling \n
+		void print(char *s); //print utf8 string on display
+		//getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
 };
 
 #endif
