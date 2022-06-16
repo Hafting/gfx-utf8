@@ -34,14 +34,15 @@ class utf8_GFX {
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
 		size_t write(uint16_t c); //print utf8 character, handling \n
-		void print(char *s); //print utf8 string on display
+		void print(unsigned char const *s); //print utf8 string on display
 		//getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
 
 		void setTextColor(uint16_t c) { textcolor = c; }
 		uint16_t getTextColor() { return textcolor; }
 		void setTextWrap(bool w) { display->setTextWrap(wrap = w); }
 		bool getTextWrap() { return wrap; }
-
+		void setTextSize(uint8_t s) { setTextSize(s, s); }
+		void setTextSize(uint8_t sx, uint8_t sy);
 
 };
 

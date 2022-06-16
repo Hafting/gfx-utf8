@@ -138,7 +138,7 @@ size_t utf8_GFX::write(uint16_t const c) {
 		//Use cur_font[0], normally no glyph for '\n', but we need yAdvance 
 		cursor_x = 0;
 		cursor_y +=
-			(int16_t)textsize_y * (uint8_t)pgm_read_byte(cur_font[0]->yAdvance);
+			(int16_t)textsize_y * (uint8_t)pgm_read_byte(&cur_font[0]->yAdvance);
 	} else {
 		//There must be a printable glyph now
 		GFXfont const * const gfxFont = font_lookup(c);
@@ -163,16 +163,52 @@ size_t utf8_GFX::write(uint16_t const c) {
 	return 1;
 }
 
+void utf8_GFX::setTextSize(uint8_t sx, uint8_t sy) {
+	textsize_x = (sx > 0) ? sx : 1;
+	textsize_y = (sy > 0) ? sy : 1;
+	display->setTextSize(textsize_x, textsize_y);
+}
+
 /*
-	 print loops through the bytes in the string, converting them to unicode numbers. For ascii, the unicode number is the ascii code. Beyond ascii, the unicode number is assembled from 2 or possibly more bytes. 
+	 print loops through the bytes in the string, converting them to unicode numbers. For ascii, the unicode number is the ascii code. Beyond ascii, the unicode number is assembled from 2 or more bytes. 
 
   Unicode numbers are then printed.
 
-  The printing mechanism is basically drawChar+print from the Adafruit GFX library, extended to print uint16_t characters. (GFXfont has 16 bit glyph numbers, no need to extend the font format.) 
+  The printing mechanism is basically drawChar+write from the Adafruit GFX library, extended to print uint16_t characters. (GFXfont has 16 bit glyph numbers, no need to extend the font format.) 
 	 */
-void utf8_GFX::print(char *s) {
+void utf8_GFX::print(unsigned char const *s) {
 	if (!cur_font) return; //No fontset, no print!
-	//incomplete
+	/*
+		Extract unicode characters for printing.
+		Skip invalid utf8
+		Skip overlong forms, as if invalid
+		Skip valid 4-byte utf8 too, as the font system is limited to 16-bit
+		 */
+	uint16_t sym;
+	while (*s) {
+		if (*s < 0x80) write(*s++); //Ascii
+		else if (*s < 0xc2) ++s;    //not valid utf-8, skip
+		else if (*s < 0xe0) {       //indicates two-byte utf8
+			sym = (*s & 0x1f) << 6;
+			++s;
+			if (*s >= 0x80 && *s <= 0xbf) { //Valid 2-byte
+				sym |= (*s++ & 0x3f);
+				write (sym);
+			} //invalid, might be a terminating 0 or ascii. 
+		} else if (*s < 0xf0) {     //indicates three-byte utf8
+			sym = (*s & 0x0f) << 12;
+			if (!s[1]) continue; //unexpected string termination.
+			if (s[1] <= 0xbf && (s[1] >= 0xa0 || (s[1] >= 0x80 && *s > 0xe0))) {
+				//Valid second byte
+				sym |= (s[1] & 0x3f) << 6;
+				if (s[2] >= 0x80 && s[2] <= 0xbf) { //third valid
+					sym |= s[2] & 0x3f;
+				  write(sym);
+					s += 3;	
+				} else s += 2; //Invalid, retest third for ascii
+			} else ++s; //Invalid, retest for ascii
+		} else ++s; //Skip longer sequences, even if valid. No font support.	
+	}
 }
 
 
