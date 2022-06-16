@@ -2,9 +2,9 @@
 utf8 printing extension for the adafruit arduino gfx library
 
 Goals:
- * print utf8 strings from source, file or received from the net
- * store glyphs beyond ascii in a compact way
- * create necessary fonts using the unmodified fontconvert utility
+ * print utf8 strings from source, file or received from the net    DONE
+ * store glyphs beyond ascii in a compact way                       OK
+ * create necessary fonts using the unmodified fontconvert utility  OK
 
 Secondary goal
  * Also implement getTextBounds_utf8()
@@ -15,9 +15,9 @@ drawChar(), print() and println() work with 8-bit bytes only. So there is room f
 The fontconvert utility uses 16-bit internally, and can therefore convert fonts with lots of interesting glyphs. But it will only do continous series of glyphs. So if you need ascii + character number 7000, you get a font with 7000 glyphs wasting precious memory.
 
 Solutions:
-The fontconvert problem is handled by making separate fonts for each range of glyphs needed. This avoids wasting space for unused glyphs. print_utf8() handles switching between sub-fonts in a font set internally.
+The fontconvert problem is handled by making separate fonts for each range of glyphs needed. This avoids wasting space for unused glyphs. utf8_GFX::print() handles switching between sub-fonts in a font set internally.
 
-print_utf8() decodes utf8 sequences to find the glyph number. Then, the correct sub-font is selected and the glyph is printed.
+utf8_GFX::print(char *s) decodes utf8 sequences to find the 16-bit glyph number for each symbol in the utf8-encoded string. Glyph numbers are passed to utf8_GFX::write(uint16_t) which handle cursor movement, and uses utf8_GFX::drawChar() to draw on the display. drawChar selects the correct sub-font from the current font set, and draws the glyph. A single string may contain symbols from several subfonts.
 
 Non-solution:
-extending print() to handle utf8 directly is possible, and backward compatible with ascii printing. It is not backwards compatible with existing 8-bit printing using iso8859 though.
+extending print() to handle utf8 directly is possible, and backward compatible with ascii printing. It is not backwards compatible with existing 8-bit printing using cp437 though.
