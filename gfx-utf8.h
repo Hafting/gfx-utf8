@@ -14,10 +14,18 @@
 	 will eventually also measure them.
 	 */
 class utf8_GFX {
-	private:
+	protected:
 		Adafruit_GFX *display;
 		const GFXfont **cur_font; //Array of fonts for utf8 printing
 		int cur_font_size;//array size
+
+		//may get cursor_x, cursor_y, rotation, _width, _height from display
+		//may NOT get textcolor, textsize_x, textsize_y, wrap. So reimplement.
+		//cursor position & text properties for print/write
+		uint8_t textsize_x;   ///< Desired magnification in X-axis of text to print()
+		uint8_t textsize_y;   ///< Desired magnification in Y-axis of text to print()
+		bool wrap;            ///< If set, 'wrap' text at right edge of display
+		uint16_t textcolor;
 
 		GFXfont const *font_lookup(uint16_t c);
 	public:
@@ -28,6 +36,13 @@ class utf8_GFX {
 		size_t write(uint16_t c); //print utf8 character, handling \n
 		void print(char *s); //print utf8 string on display
 		//getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); //future
+
+		void setTextColor(uint16_t c) { textcolor = c; }
+		uint16_t getTextColor() { return textcolor; }
+		void setTextWrap(bool w) { display->setTextWrap(wrap = w); }
+		bool getTextWrap() { return wrap; }
+
+
 };
 
 #endif

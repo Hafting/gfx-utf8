@@ -56,6 +56,9 @@ utf8_GFX::utf8_GFX(Adafruit_GFX *displ) {
 	display = displ;
 	cur_font = (GFXfont const **) 0;
 	cur_font_size = 0;
+	textsize_x = textsize_y = 1;
+	textcolor = 0xFFFF;
+	wrap = true;
 }
 
 void utf8_GFX::setFontSet(const GFXfont **fset, int n) {
@@ -72,7 +75,7 @@ GFXfont const *utf8_GFX::font_lookup(uint16_t c) {
 		GFXfont const *font = cur_font[i];
 		if (font->first <= c && font->last >= c) return font;
 	}
- return (GFXfont const *) 0;
+	return (GFXfont const *) 0;
 } 
 /*
   Draw a single unicode glyph. Searches the fontset to see which font, if any, contains the glyph. Then uses that font to print it. 
@@ -124,8 +127,39 @@ void utf8_GFX::drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_
 	display->endWrite();
 }
 
+
 //write a single character at the current position, handling \n etc
-size_t utf8_GFX::write(uint16_t c) {
+size_t utf8_GFX::write(uint16_t const c) {
+	if (!cur_font) return 0; //No fontset, no printing
+	if (c == '\r') return 1; //ignore - compatibility with Adafruit_GFX
+	int16_t cursor_x = display->getCursorX();
+	int16_t cursor_y = display->getCursorY();
+	if (c == '\n') {
+		//Use cur_font[0], normally no glyph for '\n', but we need yAdvance 
+		cursor_x = 0;
+		cursor_y +=
+			(int16_t)textsize_y * (uint8_t)pgm_read_byte(cur_font[0]->yAdvance);
+	} else {
+		//There must be a printable glyph now
+		GFXfont const * const gfxFont = font_lookup(c);
+		if (!gfxFont) return 0; //Not printable, no action.
+		uint16_t first = pgm_read_word(&gfxFont->first);
+		GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, c - first);
+		uint8_t w = pgm_read_byte(&glyph->width),
+						h = pgm_read_byte(&glyph->height);
+		if ((w > 0) && (h > 0)) { // Is there an associated bitmap?
+			int16_t xo = (int8_t)pgm_read_byte(&glyph->xOffset); // sic
+			if (wrap && ((cursor_x + textsize_x * (xo + w)) > display->width())) {
+				cursor_x = 0;
+				cursor_y += (int16_t)textsize_y *
+					(uint8_t)pgm_read_byte(&gfxFont->yAdvance);
+			}
+			drawChar(cursor_x, cursor_y, c, textcolor, textsize_x, textsize_y);
+		}
+		cursor_x +=
+			(uint8_t)pgm_read_byte(&glyph->xAdvance) * (int16_t)textsize_x;
+	}
+	display->setCursor(cursor_x, cursor_y);
 	return 1;
 }
 
