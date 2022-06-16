@@ -4,16 +4,10 @@
 #include <Adafruit_GFX.h>
 
 /*
-	A fontset is one or several regular fonts with non-overlapping glyph ranges, used for utf8 printing. This saves memory by not storing unused glyph ranges. 
+	A font array is one or several regular fonts with non-overlapping glyph ranges, used for utf8 printing. This saves memory by not storing unused glyph ranges. 
 
-	size must match the number of fonts in the array.
-
-	For sane linefeeds, all fonts in a set should have the same height.
+	For sane linefeeds, all fonts in the array should have the same height.
 	 */
-struct fontset {
-	int size;
-	GFXfont font[];
-};
 
 /*
 	 The class that prints utf8 strings,
@@ -22,12 +16,13 @@ struct fontset {
 class utf8 {
 	private:
 		Adafruit_GFX *display;
-		fontset *cur_fonts;
+		const GFXfont **cur_font; //Array of fonts for utf8 printing
+		int cur_font_size;//array size
 
-		GFXfont *font_lookup(uint16_t c);
+		GFXfont const *font_lookup(uint16_t c);
 	public:
 		utf8(Adafruit_GFX *displ);
-		void setFontSet(fontset *fset);
+		void setFontSet(const GFXfont **fset, int n);
 		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
 		void drawChar_utf8(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
 
