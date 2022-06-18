@@ -33,13 +33,13 @@ class utf8_GFX {
 		uint16_t decode_utf8(unsigned char const ** const s);
 	public:
 		utf8_GFX(Adafruit_GFX *displ);
-		void setFontSet(const GFXfont **fset, int n);
+		void setFontSet(GFXfont const **fset, int n);
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
 		size_t write(uint16_t c); //print utf8 character, handling \n
 		void print(unsigned char const *s); //print utf8 string on display
 		void print(char const *s); 
-		void getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); 
+		void getTextBounds(char const *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); 
 
 		void setTextColor(uint16_t c) { textcolor = c; }
 		uint16_t getTextColor() { return textcolor; }

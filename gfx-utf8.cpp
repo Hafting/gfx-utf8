@@ -219,39 +219,6 @@ uint16_t utf8_GFX::decode_utf8(unsigned char const * * const s) {
 	 */
 void utf8_GFX::print(unsigned char const *s) {
 	if (!cur_font) return; //No fontset, no print!
-	/*
-		Extract unicode characters for printing.
-		Skip invalid utf8
-		Skip overlong forms, as if invalid
-		Skip valid 4-byte utf8 too, as the font system is limited to 16-bit
-		 
-
-	uint16_t sym;
-	while (*s) {
-		if (*s < 0x80) write(*s++); //Ascii
-		else if (*s < 0xc2) ++s;    //not valid utf-8, skip
-		else if (*s < 0xe0) {       //indicates two-byte utf8
-			sym = (*s & 0x1f) << 6;
-			++s;
-			if (*s >= 0x80 && *s <= 0xbf) { //Valid 2-byte
-				sym |= (*s++ & 0x3f);
-				write (sym);
-			} //invalid, might be a terminating 0 or ascii. 
-		} else if (*s < 0xf0) {     //indicates three-byte utf8
-			sym = (*s & 0x0f) << 12;
-			if (!s[1]) continue; //unexpected string termination.
-			if (s[1] <= 0xbf && (s[1] >= 0xa0 || (s[1] >= 0x80 && *s > 0xe0))) {
-				//Valid second byte
-				sym |= (s[1] & 0x3f) << 6;
-				if (s[2] >= 0x80 && s[2] <= 0xbf) { //third valid
-					sym |= s[2] & 0x3f;
-				  write(sym);
-					s += 3;	
-				} else s += 2; //Invalid, retest third for ascii
-			} else ++s; //Invalid, retest for ascii
-		} else ++s; //Skip longer sequences, even if valid. No font support.	
-	}
-	*/
 	while (*s) write(decode_utf8(&s));
 }
 
@@ -305,6 +272,18 @@ void utf8_GFX::charBounds(uint16_t c, int16_t *x, int16_t *y, int16_t *minx, int
 	 then runs them through charBounds()
 	 Meant to be compatible with Adafruit_GFX::getTextBounds()
 */ 
-void utf8_GFX::getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h) {
-
+void utf8_GFX::getTextBounds(char const *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h) {
+	int16_t minx = 0x7FFF, miny = 0x7FFF, maxx = -1, maxy = -1; // Bound rect
+	*x1 = x;
+	*y1 = y;
+	*w = *h = 0;
+	while (*s) charBounds(decode_utf8((unsigned char const **)&s), &x, &y, &minx, &miny, &maxx, &maxy);
+	if (maxx >= minx) {     // If legit string bounds were found...
+		*x1 = minx;           // Update x1 to least X coord,
+		*w = maxx - minx + 1; // And w to bound rect width
+	}
+	if (maxy >= miny) { // Same for height
+		*y1 = miny;
+		*h = maxy - miny + 1;
+	}	
 }
