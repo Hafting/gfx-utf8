@@ -170,6 +170,47 @@ void utf8_GFX::setTextSize(uint8_t sx, uint8_t sy) {
 }
 
 /*
+	Helper for print() and getTextBounds()
+	Returns the next valid unicode symbol from the string.
+	The string itself is advanced to the byte after this symbol
+	Silently skips invalid utf-8 and overlong forms, as well as
+	4-byte utf-8 which don't fit the 16-bit return type.
+	Will never skip past the string's terminating zero.
+
+	Normally used from a loop, for decoding a utf-8 string
+	The loop can terminate when the string is advanced to
+	its terminating zero, or the return value is zero.
+
+	The characters themselves are const
+	The pointer to the character string pointer is const.
+	The char pointer itself is not const, it will move through the string
+	 */
+uint16_t utf8_GFX::decode_utf8(unsigned char const * * const s) {
+	uint16_t sym;
+	//Loop because we may need to skip garbage first
+	while (**s) {
+  	if (**s < 128) return *(*s)++;       //Ascii subset
+		if (**s < 0xc2) ++(*s);              //skip invalid utf-8
+		else if (**s < 0xe0) {               //starts two-byte sequence
+			sym = (*(*s)++ & 0x1f) << 6;
+			//Valid second byte?
+			if (**s >= 0x80 && **s <= 0xbf) return sym | (*(*s)++ & 0x3f);
+		}	else if (**s < 0xf0) {             //starts three-byte seq
+			sym = (**s & 0x0f) << 12;
+			unsigned char first = *(*s)++;
+			//Valid second
+			if (**s <= 0xbf && (**s >= 0xa0 || (**s >= 0x80 && first > 0xe0))) {
+				//Valid second byte
+				sym |= (*(*s)++ & 0x3f) << 6;
+				//Third byte valid?
+				if (**s >= 0x80 && **s <= 0xbf) return sym | (*(*s)++ & 0x3f);
+			} //invalid second of 3, let the loop handle it
+		}	//invalid or 4-byte utf-8, treat as invalid
+	} //end of string
+	return 0;
+}
+
+/*
 	 print loops through the bytes in the string, converting them to unicode numbers. For ascii, the unicode number is the ascii code. Beyond ascii, the unicode number is assembled from 2 or more bytes. 
 
   Unicode numbers are then printed.
@@ -183,7 +224,8 @@ void utf8_GFX::print(unsigned char const *s) {
 		Skip invalid utf8
 		Skip overlong forms, as if invalid
 		Skip valid 4-byte utf8 too, as the font system is limited to 16-bit
-		 */
+		 
+
 	uint16_t sym;
 	while (*s) {
 		if (*s < 0x80) write(*s++); //Ascii
@@ -209,11 +251,15 @@ void utf8_GFX::print(unsigned char const *s) {
 			} else ++s; //Invalid, retest for ascii
 		} else ++s; //Skip longer sequences, even if valid. No font support.	
 	}
+	*/
+	while (*s) write(decode_utf8(&s));
 }
 
+//Apparently, c++ is sufficiently stupid to need this:
 void utf8_GFX::print(char const *s) {
-	print((unsigned char const *)s); //Apparently, c++ is that stupid.
+	print((unsigned char const *)s);
 }
+
 /*
   Straight from Adafruit_GFX, except:
 	 - the c parameter is a 16-bit unicode character
@@ -254,3 +300,11 @@ void utf8_GFX::charBounds(uint16_t c, int16_t *x, int16_t *y, int16_t *minx, int
 	}
 }
 
+/*
+	 Text bounds for a utf8 string. Picks out & validates unicode symbols,
+	 then runs them through charBounds()
+	 Meant to be compatible with Adafruit_GFX::getTextBounds()
+*/ 
+void utf8_GFX::getTextBounds(char *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h) {
+
+}
