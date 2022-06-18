@@ -214,4 +214,43 @@ void utf8_GFX::print(unsigned char const *s) {
 void utf8_GFX::print(char const *s) {
 	print((unsigned char const *)s); //Apparently, c++ is that stupid.
 }
+/*
+  Straight from Adafruit_GFX, except:
+	 - the c parameter is a 16-bit unicode character
+	 - font_lookup is used to find the correct font
+	 - special casing for "default font" removed.
+*/
+void utf8_GFX::charBounds(uint16_t c, int16_t *x, int16_t *y, int16_t *minx, int16_t *miny, int16_t *maxx, int16_t *maxy) {
+	if (!cur_font) return; //No fontset, no bounds
+	if (c == '\n') { // Newline? No font lookup, as \n have no glyph.
+		*x = 0;        // Reset x to zero, advance y by one line
+		*y += textsize_y * (uint8_t)pgm_read_byte(&cur_font[0]->yAdvance);
+	} else if (c != '\r') { // Not a carriage return; is normal char
+		GFXfont const * const gfxFont = font_lookup(c);
+		if (!gfxFont) return; //unprintable, no bounds
+		uint8_t first = pgm_read_byte(&gfxFont->first);
+		GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, c - first);
+		uint8_t gw = pgm_read_byte(&glyph->width),
+						gh = pgm_read_byte(&glyph->height),
+						xa = pgm_read_byte(&glyph->xAdvance);
+		int8_t xo = pgm_read_byte(&glyph->xOffset),
+					 yo = pgm_read_byte(&glyph->yOffset);
+		if (wrap && ((*x + (((int16_t)xo + gw) * textsize_x)) > display->width())) {
+			*x = 0; // Reset x to zero, advance y by one line
+			*y += textsize_y * (uint8_t)pgm_read_byte(&gfxFont->yAdvance);
+		}
+		int16_t tsx = (int16_t)textsize_x, tsy = (int16_t)textsize_y,
+						x1 = *x + xo * tsx, y1 = *y + yo * tsy, x2 = x1 + gw * tsx - 1,
+						y2 = y1 + gh * tsy - 1;
+		if (x1 < *minx)
+			*minx = x1;
+		if (y1 < *miny)
+			*miny = y1;
+		if (x2 > *maxx)
+			*maxx = x2;
+		if (y2 > *maxy)
+			*maxy = y2;
+		*x += xa * tsx;
+	}
+}
 
