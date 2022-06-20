@@ -2,7 +2,7 @@
 #define GFXUTF8
 
 #include <Adafruit_GFX.h>
-
+#include <Print.h>
 /*
 	A font array is one or several regular fonts with non-overlapping glyph ranges, used for utf8 printing. This saves memory by not storing unused glyph ranges. 
 
@@ -13,7 +13,7 @@
 	 The class that prints utf8 strings,
 	 will eventually also measure them.
 	 */
-class utf8_GFX {
+class utf8_GFX : public Print {
 	protected:
 		Adafruit_GFX *display;
 		const GFXfont **cur_font; //Array of fonts for utf8 printing
@@ -36,9 +36,13 @@ class utf8_GFX {
 		void setFontSet(GFXfont const **fset, int n);
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size);
 		void drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_t size_x, uint8_t size_y);
+		//Support printnumber:		
+		size_t write(uint8_t c);
+		//Support strings, which may use utf-8:
+		size_t write(const uint8_t *buffer, size_t size);
+
+		//Write a unicode character number. 	
 		size_t write(uint16_t c); //print utf8 character, handling \n
-		void print(unsigned char const *s); //print utf8 string on display
-		void print(char const *s); 
 		void getTextBounds(char const *s, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h); 
 
 		void setTextColor(uint16_t c) { textcolor = c; }

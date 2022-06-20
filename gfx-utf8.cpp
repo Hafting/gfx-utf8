@@ -127,6 +127,10 @@ void utf8_GFX::drawChar(int16_t x, int16_t y, uint16_t c, uint16_t color, uint8_
 	display->endWrite();
 }
 
+//Supports printnumber and such
+size_t utf8_GFX::write(uint8_t const c) {
+	return write((uint16_t) c); //works for numbers
+}
 
 //write a single character at the current position, handling \n etc
 size_t utf8_GFX::write(uint16_t const c) {
@@ -211,20 +215,19 @@ uint16_t utf8_GFX::decode_utf8(unsigned char const * * const s) {
 }
 
 /*
-	 print loops through the bytes in the string, converting them to unicode numbers. For ascii, the unicode number is the ascii code. Beyond ascii, the unicode number is assembled from 2 or more bytes. 
+	 write loops through the bytes in the string, converting them to unicode numbers. For ascii, the unicode number is the ascii code. Beyond ascii, the unicode number is assembled from 2 or more bytes. 
 
   Unicode numbers are then printed.
 
   The printing mechanism is basically drawChar+write from the Adafruit GFX library, extended to print uint16_t characters. (GFXfont has 16 bit glyph numbers, no need to extend the font format.) 
 	 */
-void utf8_GFX::print(unsigned char const *s) {
-	if (!cur_font) return; //No fontset, no print!
-	while (*s) write(decode_utf8(&s));
-}
 
-//Apparently, c++ is sufficiently stupid to need this:
-void utf8_GFX::print(char const *s) {
-	print((unsigned char const *)s);
+size_t utf8_GFX::write(const uint8_t *buffer, size_t size) {
+	if (!cur_font) return 0; //No fontset, no print
+	unsigned char const *s = buffer;
+	while (s-buffer < size) {
+		write(decode_utf8(&s));
+	}
 }
 
 /*

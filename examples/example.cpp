@@ -62,8 +62,6 @@ One of the arrows are not in FreeSans, and prints as a framed question mark inst
 u8display.drawChar puts a single symbol where you want it.
 u8display.print prints a string, containing any unicode symbols from the basic multilingual plane. (Assuming you have a font containing these symbols..)
 
-if you want to print numeric variables, use 
-display.setFont and display.print as usual. Unicode beyond ascii is not needed for numbers.
  */
 
 
