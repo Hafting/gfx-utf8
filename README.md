@@ -20,6 +20,8 @@ The fontconvert problem is handled by making separate fonts for each range of gl
 
 utf8_GFX::write(char *s) decodes utf8 sequences to find the 16-bit glyph number for each symbol in the utf8-encoded string. Glyph numbers are passed to utf8_GFX::write(uint16_t) which handle cursor movement, and subsequently uses utf8_GFX::drawChar() to draw on the display. drawChar selects the correct sub-font from the current font set, and draws the glyph. A single string may contain symbols from several subfonts.
 
+For an example of use, see https://github.com/Hafting/moonwatchy The library is used for printing Norwegian text, moon phase symbols and zodiac symbols. Unicode has many interesting symbols.
+
 Non-solution:
 Extending Adafruit_GFX print() to handle utf8 directly is possible, and backward compatible with ascii printing. It is not backwards compatible with existing 8-bit printing using cp437 though, and backward compatibility is their prime directive.
 
