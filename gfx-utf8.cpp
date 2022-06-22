@@ -224,10 +224,12 @@ uint16_t utf8_GFX::decode_utf8(unsigned char const * * const s) {
 
 size_t utf8_GFX::write(const uint8_t *buffer, size_t size) {
 	if (!cur_font) return 0; //No fontset, no print
+	int n = 0;
 	unsigned char const *s = buffer;
 	while (s-buffer < size) {
-		write(decode_utf8(&s));
+		n += write(decode_utf8(&s));
 	}
+	return n;
 }
 
 /*
@@ -244,7 +246,7 @@ void utf8_GFX::charBounds(uint16_t c, int16_t *x, int16_t *y, int16_t *minx, int
 	} else if (c != '\r') { // Not a carriage return; is normal char
 		GFXfont const * const gfxFont = font_lookup(c);
 		if (!gfxFont) return; //unprintable, no bounds
-		uint8_t first = pgm_read_byte(&gfxFont->first);
+		uint16_t first = pgm_read_word(&gfxFont->first);
 		GFXglyph *glyph = pgm_read_glyph_ptr(gfxFont, c - first);
 		uint8_t gw = pgm_read_byte(&glyph->width),
 						gh = pgm_read_byte(&glyph->height),
